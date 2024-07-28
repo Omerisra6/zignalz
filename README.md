@@ -1,60 +1,59 @@
-# Create TypeScript Package
+# Zignalz
 
-A template project for developing & publishing TypeScript packages.
+`zignalz` is a basic fully-typed implementation of the signal pattern in TypeScript.
 
-## Configuration
+## Installation
 
-1. Replace the package name, description, author, license, etc. in the [package.json](./package.json) with your package's details
+```bash
+npm install zignalz
+```
 
-2. Update this [README.md](./README.md) file to contain your package's documentation
+## Signal concept
 
-3. Update the [release.yml](.github/workflows/release.yml) workflow to check for your username when publishing (this is used to prevent the workflow from running in forks):
+A signal is a value that can change over time and automatically infer and trigger who ever using it.
 
-   ```yaml
-   if: startsWith(github.repository, '{your-username}/')
-   ```
+### Mechanism
 
-4. Configure `GITHUB_TOKEN` to have the permissions to create Pull Requests:
+The signal (method/class) exposes two methods: get and set, other than that, to allow observation of the signal value
+we initialize a new list that will contain all the signal observers, and an observe function.
 
-   1. Go to https://github.com/{owner}/{repo}/settings/actions
-   2. Check "Allow GitHub Actions to create and approve pull requests" under "Workflow permissions"
+The observe method takes a callback, adding the callback to the observer list, triggers the cb, and then
+deletes the observer from the list.
 
-5. Add `NPM_TOKEN` to your Repository secrets:
+And that's practically it...
 
-   1. Go to NPM's [Access Tokens](https://www.npmjs.com/settings/styleshit/tokens) page
-   2. Click "Generate New Token" -> "Classic Token" and follow the instructions (make sure to choose "Automation" for the token type)
-   3. Go to https://github.com/{owner}/{repo}/settings/secrets/actions, and add the generated token as a secret named `NPM_TOKEN`
+### How the magic happens?
 
-## Structure
+The observe method creates an automatic dependency tracking, and when the signal value changes,
+it triggers all the observers which will use the updated value.
 
-- `src/` - TypeScript source files
-- `**/__tests__/` - Test files
-- `dist/` - Compiled JavaScript files
+### Example
 
-## Tools
+In this example, we have a signal that contains a count and a name and a render function that will render the app
+every time the signal value changes.
 
-This template uses [tsup](https://tsup.egoist.dev/) for transpiling & bundling,
-[Vitest](https://vitest.dev/) for testing,
-[ESLint](https://eslint.org/) & [TypeScript ESLint](https://typescript-eslint.io/) (with the strictest configuration) for linting,
-[Prettier](https://prettier.io/) for formatting,
-and [Changesets](https://github.com/changesets/changesets) for versioning & publishing.
+```ts
+import { createSignal, observe } from 'zignalz';
 
-## Development Flow
+export const { get, set } = new createSignal({ count: 0 });
 
-1. Add your code & tests to the `src/` directory
+const init = () => {
+  const render = () => {
+    renderApp();
+  };
 
-2. Use `npm run test` to run the tests
+  observe(render);
+};
 
-3. Use `npm run lint` to lint the code
+const renderApp = () => {
+  const { count, name } = get();
 
-4. Use `npm run format` to format the code
+  document.body.innerHTML = `
+        <h1>${name}</h1>
+        <p>${count}</p>
+        <button onclick="set({count: ${count + 1}})">Increment</button>
+    `;
+};
 
-5. Use `npm run build` to build the package
-
-6. Run `npx changeset` each time you want to add a commit to the changelog (see [Using Changesets](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md#using-changesets) for more info)
-
-7. Commit & push your changes
-
-8. The CI will automatically open a PR with the changes, or add the changes to an existing PR
-
-9. Review & merge the PR when you're ready to publish the package
+init();
+```

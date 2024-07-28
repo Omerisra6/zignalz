@@ -1,8 +1,8 @@
 {
-	"name": "create-typescript-package",
-	"description": "A template project for developing & publishing TypeScript packages",
+	"name": "zignalz",
+	"description": "A basic fully-typed implementation of the signal pattern",
 	"version": "0.0.0",
-	"author": "StyleShit",
+	"author": "Omerisra6",
 	"license": "MIT",
 	"repository": {
 		"type": "git",

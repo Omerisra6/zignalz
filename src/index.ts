@@ -1,4 +1,4 @@
-let observer: ( () => void ) | null = null;
+let observer: (() => void) | null = null;
 
 export function createSignal<T>(initialValue: T) {
 	const listeners: Array<() => void> = [];

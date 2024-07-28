@@ -39,20 +39,16 @@ import { Signal } from 'zignalz';
 const counter = new Signal(0);
 
 const increment = () => {
-    counter.set( counter.get() + 1 );
+  counter.set(counter.get() + 1);
 };
 
-const counterElement = document.getElementById('counter'); 
+const counterElement = document.getElementById('counter');
 
 const observer = () => {
-    counterElement.innerText = counter.get().toString();
+  counterElement.innerText = counter.get().toString();
 };
 
-observe( observer );
+observe(observer);
 
 increment(); // counterElement.innerText = 1
 ```
-
-
-
-

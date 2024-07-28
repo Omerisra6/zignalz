@@ -1,4 +1,4 @@
-const observers = new Set<() => void>();
+let observer: ( () => void ) | null = null;
 
 export function createSignal<T>(initialValue: T) {
 	const listeners: Array<() => void> = [];
@@ -6,7 +6,10 @@ export function createSignal<T>(initialValue: T) {
 	let value = initialValue;
 
 	const get = () => {
-		observers.forEach((cb) => listeners.push(cb));
+		if (observer) {
+			listeners.push(observer);
+		}
+
 		return value;
 	};
 
@@ -22,7 +25,7 @@ export function createSignal<T>(initialValue: T) {
 }
 
 export function observe(cb: () => void) {
-	observers.add(cb);
+	observer = cb;
 	cb();
-	observers.delete(cb);
+	observer = null;
 }

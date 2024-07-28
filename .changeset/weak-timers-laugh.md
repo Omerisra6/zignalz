@@ -1,5 +1,0 @@
----
-'zignalz': patch
----
-
-lint
